@@ -316,7 +316,7 @@ $("#screen-container").on("touchstart mousedown", function(e) {
 				scrollY -= (scrollY + scrollRangeY)/4;
 			}
 
-			iconMapRefresh(100, 45, {x : scrollX, y: scrollY});
+			iconMapRefresh(100, 43, {x : scrollX, y: scrollY});
 			step++;
 		},16)
 	})
