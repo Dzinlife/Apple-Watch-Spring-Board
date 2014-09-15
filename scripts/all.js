@@ -142,7 +142,7 @@ function iconMapRefresh(sphereR, hexR, scroll, _option) {
 	for (i in hexCubePolar) {
 		var rad = hexCubePolar[i].r / sphereR;
 		if (rad < Math.PI/2) {
-			var r = hexCubePolar[i].r * $.easing["easeOutQuad"](null, rad / (Math.PI/2), 1.4, -0.4, 1);
+			var r = hexCubePolar[i].r * $.easing["swing"](null, rad / (Math.PI/2), 1.5, -0.5, 1);
 			var deepth = $.easing["easeInOutCubic"](null, rad / (Math.PI/2), 1, -0.5, 1);
 		}else{
 			var r = hexCubePolar[i].r;
@@ -162,7 +162,7 @@ function iconMapRefresh(sphereR, hexR, scroll, _option) {
 
 	for (i in hexCubeOrtho) {
 			hexCubeOrtho[i].x = Math.round(hexCubeOrtho[i].x * 10) / 10;
-			hexCubeOrtho[i].y = Math.round(hexCubeOrtho[i].y * 10) / 10 *1.1;
+			hexCubeOrtho[i].y = Math.round(hexCubeOrtho[i].y * 10) / 10 *1.14;
 	}
 
 	if (option.edgeZoom === true) {
@@ -333,7 +333,7 @@ function homeOpening (){
 	$("#home").css({
 		"transform"	: "scale(1)",
 		"opacity"		: 0,
-		"transition"	: "200ms cubic-bezier(0.19, 1, 0.22, 1)",
+		"transition"	: "300ms cubic-bezier(0.19, 1, 0.22, 1)",
 	});
 	setTimeout(function(){
 		$("#home").css({
@@ -355,7 +355,7 @@ function homeOpening (){
 				scrollAvailable = true;
 			};
 
-			iconMapRefresh(100, $.easing["easeOutCubic"](null, openingStep, 100, -55, 36), {x : 0, y: 0})
+			iconMapRefresh(100, $.easing["easeOutCubic"](null, openingStep, 100, -57, 36), {x : 0, y: 0})
 
 			openingStep++;
 		},16)
