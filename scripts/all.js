@@ -239,9 +239,9 @@ $("#screen-container").on("touchstart mousedown", function(e) {
 		};
 	};
 
-	if (e.originalEvent.targetTouches[0] !== undefined) {
-		e.originalEvent = e.originalEvent.targetTouches[0];
-	};
+	// if (e.originalEvent.targetTouches[0] !== undefined) {
+	// 	e.originalEvent = e.originalEvent.targetTouches[0];
+	// };
 	
 	$(window).off("touchmove mousemove");
 	lastX = e.originalEvent.pageX;
