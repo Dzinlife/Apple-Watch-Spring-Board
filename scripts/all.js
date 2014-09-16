@@ -239,7 +239,7 @@ $("#screen-container").on("touchstart mousedown", function(e) {
 		};
 	};
 
-	if (e.touches !== undefined) {
+	if (e.originalEvent.touches !== undefined) {
 		e.originalEvent = e.touches[0];
 	};
 
@@ -261,8 +261,8 @@ $("#screen-container").on("touchstart mousedown", function(e) {
 		e.preventDefault();
 		e.stopPropagation();
 
-		if (e.touches !== undefined) {
-			e.originalEvent = e.touches[0];
+		if (e.originalEvent.touches !== undefined) {
+			e.originalEvent = e.originalEvent.touches[0];
 		};
 
 		deltaX = e.originalEvent.pageX - lastX;
