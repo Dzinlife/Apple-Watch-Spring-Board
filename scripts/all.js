@@ -239,7 +239,7 @@ $("#screen-container").on("touchstart mousedown", function(e) {
 		};
 	};
 
-	if (e.originalEvent.touches !== undefined) {
+	if (e.touches !== undefined) {
 		e.originalEvent = e.touches[0];
 	};
 
