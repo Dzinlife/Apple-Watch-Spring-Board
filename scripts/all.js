@@ -239,7 +239,7 @@ $("#screen-container").on("touchstart mousedown", function(e) {
 		};
 	};
 
-	if (e.originalEvent.Touches) {
+	if (e.originalEvent.Touches !== undefined) {
 		e.originalEvent = e.originalEvent.Touches[0];
 	};
 
@@ -261,7 +261,7 @@ $("#screen-container").on("touchstart mousedown", function(e) {
 		e.preventDefault();
 		e.stopPropagation();
 
-		if (e.originalEvent.Touches) {
+		if (e.originalEvent.Touches !== undefined) {
 			e.originalEvent = e.originalEvent.Touches[0];
 		};
 
