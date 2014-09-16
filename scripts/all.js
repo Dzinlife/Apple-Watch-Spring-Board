@@ -238,10 +238,14 @@ $("#screen-container").on("touchstart mousedown", function(e) {
 			return;
 		};
 	};
+
+	if (e.originalEvent.targetTouches[0] !== undefined) {
+		e.originalEvent = e.originalEvent.targetTouches[0];
+	};
 	
 	$(window).off("touchmove mousemove");
-	lastX = e.originalEvent.pageX || e.originalEvent.targetTouches[0].pageX;
-	lastY = e.originalEvent.pageY || e.originalEvent.targetTouches[0].pageY;
+	lastX = e.originalEvent.pageX;
+	lastY = e.originalEvent.pageY;
 	deltaX = e.originalEvent.pageX - lastX;
 	deltaY = e.originalEvent.pageY - lastY;
 	scrollMoveX += deltaX;
