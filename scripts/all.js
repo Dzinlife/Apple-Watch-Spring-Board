@@ -238,12 +238,6 @@ $("#screen-container").on("touchstart mousedown", function(e) {
 			return;
 		};
 	};
-
-	// if (e.originalEvent.touches !== undefined) {
-	// 	e.originalEvent = e.originalEvent.touches[0];
-	// };
-
-	console.log(e)
 	
 	$(window).off("touchmove mousemove");
 	lastX = e.originalEvent.pageX;
@@ -260,10 +254,6 @@ $("#screen-container").on("touchstart mousedown", function(e) {
 	$(window).on('touchmove mousemove', function(e){
 		e.preventDefault();
 		e.stopPropagation();
-
-		// if (e.originalEvent.touches !== undefined) {
-		// 	e.originalEvent = e.originalEvent.touches[0];
-		// };
 
 		deltaX = e.originalEvent.pageX - lastX;
 		deltaY = e.originalEvent.pageY - lastY;
@@ -291,7 +281,7 @@ $("#screen-container").on("touchstart mousedown", function(e) {
 
 	  iconMapRefresh(100, 45, {x : scrollX, y: scrollY})
 	});
-	$(window).on("touchend mouseup" ,function() {
+	$(window).on("touchend mouseup" ,function(e) {
 		$(window).off("touchmove mousemove touchend mouseup");
 		var step = 1,
 				steps = 36,
