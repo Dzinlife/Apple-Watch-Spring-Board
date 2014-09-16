@@ -240,7 +240,7 @@ $("#screen-container").on("touchstart mousedown", function(e) {
 	};
 
 	if (e.originalEvent.touches !== undefined) {
-		e.originalEvent = e.touches[0];
+		e.originalEvent = e.originalEvent.touches[0];
 	};
 
 	console.log(e)
