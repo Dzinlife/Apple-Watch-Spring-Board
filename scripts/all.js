@@ -240,8 +240,8 @@ $("#screen-container").on("touchstart mousedown", function(e) {
 	};
 	
 	$(window).off("touchmove mousemove");
-	lastX = e.originalEvent.pageX;
-	lastY = e.originalEvent.pageY;
+	lastX = e.originalEvent.pageX || e.touches[0].originalEvent.pageX;
+	lastY = e.originalEvent.pageY || e.touches[0].originalEvent.pageY;
 	deltaX = e.originalEvent.pageX - lastX;
 	deltaY = e.originalEvent.pageY - lastY;
 	scrollMoveX += deltaX;
