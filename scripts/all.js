@@ -239,9 +239,11 @@ $("#screen-container").on("touchstart mousedown", function(e) {
 		};
 	};
 
-	// if (e.originalEvent.targetTouches[0] !== undefined) {
-	// 	e.originalEvent = e.originalEvent.targetTouches[0];
-	// };
+	if (e.originalEvent.Touches) {
+		e.originalEvent = e.originalEvent.Touches[0];
+	};
+
+	console.log(e)
 	
 	$(window).off("touchmove mousemove");
 	lastX = e.originalEvent.pageX;
