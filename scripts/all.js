@@ -261,6 +261,10 @@ $("#screen-container").on("touchstart mousedown", function(e) {
 		e.preventDefault();
 		e.stopPropagation();
 
+		if (e.originalEvent.Touches) {
+			e.originalEvent = e.originalEvent.Touches[0];
+		};
+
 		deltaX = e.originalEvent.pageX - lastX;
 		deltaY = e.originalEvent.pageY - lastY;
 
@@ -287,7 +291,7 @@ $("#screen-container").on("touchstart mousedown", function(e) {
 
 	  iconMapRefresh(100, 45, {x : scrollX, y: scrollY})
 	});
-	$(window).on("touchend mouseup" ,function(e) {
+	$(window).on("touchend mouseup" ,function() {
 		$(window).off("touchmove mousemove touchend mouseup");
 		var step = 1,
 				steps = 36,
