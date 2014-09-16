@@ -239,6 +239,10 @@ $("#screen-container").on("touchstart mousedown", function(e) {
 		};
 	};
 	
+	if (e.originalEvent.touches[0] !== undefined) {
+		e.originalEvent = e.originalEvent.touches[0];
+	};
+
 	$(window).off("touchmove mousemove");
 	lastX = e.originalEvent.pageX;
 	lastY = e.originalEvent.pageY;
@@ -255,6 +259,10 @@ $("#screen-container").on("touchstart mousedown", function(e) {
 		e.preventDefault();
 		e.stopPropagation();
 
+	if (e.originalEvent.touches[0] !== undefined) {
+		e.originalEvent = e.originalEvent.touches[0];
+	};
+	
 		deltaX = e.originalEvent.pageX - lastX;
 		deltaY = e.originalEvent.pageY - lastY;
 
