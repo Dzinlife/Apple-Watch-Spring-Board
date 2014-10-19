@@ -67,30 +67,44 @@ $.fn.extend({
 	},
 })
 
-var screenW,
-		screenH,
-		centerW,
-		centerH;
 
-!function(){
-	screenW = $("#screen-container").outerWidth();
-	screenH = $("#screen-container").outerHeight();
-	centerW = screenW/2;
-	centerH = screenH/2;
+var WATCH = function () {
+	this.screen = $("#screen-container");
+	this.init();
 
-}();
+	this.scrollX = 0,
+	this.scrollY = 0,
+	this.scrollMoveX = 0,
+	this.scrollMoveY = 0,
+	this.lastX = undefined,
+	this.lastY = undefined,
+	this.deltaX = undefined,
+	this.deltaY = undefined,
+	this.scrollRangeX = 30,
+	this.scrollRangeY = 10,
+	this.inertia = undefined,
+	this.inertiaX = undefined,
+	this.inertiaY = undefined,
+	this.scrollAvailable = true;
 
-hexCube = new Array();
-for(var i = 0; i < 4; i++){
+}
+
+WATCH.prototype.init = function() {
+	this.screenW = $("#screen-container").outerWidth();
+	this.screenH = $("#screen-container").outerHeight();
+	this.centerW = this.screenW/2;
+	this.centerH = this.screenH/2;
+
+	this.hexCube = new Array();
+	for(var i = 0; i < 4; i++)
   for(var j = -i; j <= i; j++)
   for(var k = -i; k <= i; k++)
   for(var l = -i; l <= i; l++)
     if(Math.abs(j) + Math.abs(k) + Math.abs(l) == i*2 && j + k + l == 0)
-    hexCube.push([j,k,l]);
+    this.hexCube.push([j,k,l]);
 }
 
-function iconMapRefresh(sphereR, hexR, scroll, _option) {
-	// console.log("before " + Date.parse(new Date()))
+WATCH.prototype.iconMapRefresh = function (sphereR, hexR, scroll, _option) {
 	hexCubeOrtho = new Array(),
 	hexCubePolar = new Array(),
 	hexCubeSphere = new Array();
@@ -128,10 +142,10 @@ function iconMapRefresh(sphereR, hexR, scroll, _option) {
 		}
 	}
 
-	for (i in hexCube) {
+	for (i in this.hexCube) {
 		hexCubeOrtho[i] = {
-			"x": (hexCube[i][1] + hexCube[i][0] / 2) * hexR + scrollX,
-			"y": Math.sqrt(3) / 2 * hexCube[i][0] * hexR + scrollY,
+			"x": (this.hexCube[i][1] + this.hexCube[i][0] / 2) * hexR + scrollX,
+			"y": Math.sqrt(3) / 2 * this.hexCube[i][0] * hexR + scrollY,
 		}
 	}
 
@@ -168,64 +182,47 @@ function iconMapRefresh(sphereR, hexR, scroll, _option) {
 	if (option.edgeZoom === true) {
 		var edge = 12;
 		for (i in hexCubeOrtho) {
-			if (Math.abs(hexCubeOrtho[i].x) > screenW/2 - edge || Math.abs(hexCubeOrtho[i].y) > screenH/2 - edge) {
+			if (Math.abs(hexCubeOrtho[i].x) > this.screenW/2 - edge || Math.abs(hexCubeOrtho[i].y) > this.screenH/2 - edge) {
 				hexCubeOrtho[i].scale = hexCubeSphere[i].deepth * 0.4;
-			}else if(Math.abs(hexCubeOrtho[i].x) > screenW/2 - 2 * edge && Math.abs(hexCubeOrtho[i].y) > screenH/2 - 2 * edge){
-				hexCubeOrtho[i].scale = Math.min(hexCubeSphere[i].deepth * $.easing["easeInOutSine"](null, screenW/2 - Math.abs(hexCubeOrtho[i].x) - edge, 0.4, 0.6, edge), hexCubeSphere[i].deepth * $.easing["easeInOutSine"](null, screenH/2 - Math.abs(hexCubeOrtho[i].y) - edge, 0.3, 0.7, edge) );
-			}else if(Math.abs(hexCubeOrtho[i].x) > screenW/2 - 2 * edge){
-				hexCubeOrtho[i].scale = hexCubeSphere[i].deepth * $.easing["easeOutSine"](null, screenW/2 - Math.abs(hexCubeOrtho[i].x) - edge, 0.4, 0.6, edge);
-			}else if(Math.abs(hexCubeOrtho[i].y) > screenH/2 - 2 * edge){
-				hexCubeOrtho[i].scale = hexCubeSphere[i].deepth * $.easing["easeOutSine"](null, screenH/2 - Math.abs(hexCubeOrtho[i].y) - edge, 0.4, 0.6, edge);
+			}else if(Math.abs(hexCubeOrtho[i].x) > this.screenW/2 - 2 * edge && Math.abs(hexCubeOrtho[i].y) > this.screenH/2 - 2 * edge){
+				hexCubeOrtho[i].scale = Math.min(hexCubeSphere[i].deepth * $.easing["easeInOutSine"](null, this.screenW/2 - Math.abs(hexCubeOrtho[i].x) - edge, 0.4, 0.6, edge), hexCubeSphere[i].deepth * $.easing["easeInOutSine"](null, this.screenH/2 - Math.abs(hexCubeOrtho[i].y) - edge, 0.3, 0.7, edge) );
+			}else if(Math.abs(hexCubeOrtho[i].x) > this.screenW/2 - 2 * edge){
+				hexCubeOrtho[i].scale = hexCubeSphere[i].deepth * $.easing["easeOutSine"](null, this.screenW/2 - Math.abs(hexCubeOrtho[i].x) - edge, 0.4, 0.6, edge);
+			}else if(Math.abs(hexCubeOrtho[i].y) > this.screenH/2 - 2 * edge){
+				hexCubeOrtho[i].scale = hexCubeSphere[i].deepth * $.easing["easeOutSine"](null, this.screenH/2 - Math.abs(hexCubeOrtho[i].y) - edge, 0.4, 0.6, edge);
 			}else{
 				hexCubeOrtho[i].scale = hexCubeSphere[i].deepth;
 			}
 		}
 
 		for (i in hexCubeOrtho){
-			if (hexCubeOrtho[i].x < -screenW/2 + 2 * edge) {
-				hexCubeOrtho[i].x += $.easing["easeInSine"](null, screenW/2 - Math.abs(hexCubeOrtho[i].x) - 2 * edge, 0, 6, 2 * edge);
-			}else if(hexCubeOrtho[i].x > screenW/2 - 2 * edge) {
-				hexCubeOrtho[i].x += $.easing["easeInSine"](null, screenW/2 - Math.abs(hexCubeOrtho[i].x) - 2 * edge, 0, -6, 2 * edge);
+			if (hexCubeOrtho[i].x < -this.screenW/2 + 2 * edge) {
+				hexCubeOrtho[i].x += $.easing["easeInSine"](null, this.screenW/2 - Math.abs(hexCubeOrtho[i].x) - 2 * edge, 0, 6, 2 * edge);
+			}else if(hexCubeOrtho[i].x > this.screenW/2 - 2 * edge) {
+				hexCubeOrtho[i].x += $.easing["easeInSine"](null, this.screenW/2 - Math.abs(hexCubeOrtho[i].x) - 2 * edge, 0, -6, 2 * edge);
 			};
-			if(hexCubeOrtho[i].y < -screenH/2 + 2 * edge) {
-				hexCubeOrtho[i].y += $.easing["easeInSine"](null, screenH/2 - Math.abs(hexCubeOrtho[i].y) - 2 * edge, 0, 8, 2 * edge);
-			}else if(hexCubeOrtho[i].y > screenH/2 - 2 * edge) {
-				hexCubeOrtho[i].y += $.easing["easeInSine"](null, screenH/2 - Math.abs(hexCubeOrtho[i].y) - 2 * edge, 0, -8, 2 * edge);
+			if(hexCubeOrtho[i].y < -this.screenH/2 + 2 * edge) {
+				hexCubeOrtho[i].y += $.easing["easeInSine"](null, this.screenH/2 - Math.abs(hexCubeOrtho[i].y) - 2 * edge, 0, 8, 2 * edge);
+			}else if(hexCubeOrtho[i].y > this.screenH/2 - 2 * edge) {
+				hexCubeOrtho[i].y += $.easing["easeInSine"](null, this.screenH/2 - Math.abs(hexCubeOrtho[i].y) - 2 * edge, 0, -8, 2 * edge);
 			}
 		}
 	};
 
-	
-
-	!function() {
-		for (var i = 0; i < $(".appicon").length; i++){
-			$(".appicon").eq(i).transform({
-				"x": hexCubeOrtho[i].x,
-				"y": hexCubeOrtho[i].y,
-				"scale": hexCubeOrtho[i].scale,
-			});
-		}
-	}()
+	for (var i = 0; i < $(".appicon").length; i++){
+		$(".appicon").eq(i).transform({
+			"x": hexCubeOrtho[i].x,
+			"y": hexCubeOrtho[i].y,
+			"scale": hexCubeOrtho[i].scale,
+		});
+	}
 
 	// console.log("after " + Date.parse(new Date()))
 
 }
 
+var watch = new WATCH();
 
-var scrollX = 0,
-		scrollY = 0,
-		scrollMoveX = 0,
-		scrollMoveY = 0,
-		lastX,
-		lastY,
-		deltaX,
-		deltaY,
-		scrollRangeX = 30,
-		scrollRangeY = 10,
-		inertia,
-		inertiaX,
-		inertiaY,
-		scrollAvailable = true;
 
 $("#screen-container").on("touchstart mousedown", function(e) {
 	if (scrollAvailable === false) {
@@ -237,100 +234,98 @@ $("#screen-container").on("touchstart mousedown", function(e) {
 			e.preventDefault();
 			return;
 		};
-	};
-	
-	if (e.originalEvent.touches !== undefined) {
 		e.originalEvent = e.originalEvent.touches[0];
 	};
 
 	$(window).off("touchmove mousemove");
-	lastX = e.originalEvent.pageX;
-	lastY = e.originalEvent.pageY;
-	deltaX = e.originalEvent.pageX - lastX;
-	deltaY = e.originalEvent.pageY - lastY;
-	scrollMoveX += deltaX;
-	scrollMoveY += deltaY;
-	scrollX = scrollMoveX;
-	scrollY = scrollMoveY;
 
-	clearInterval(inertia);
+	watch.lastX = e.originalEvent.pageX;
+	watch.lastY = e.originalEvent.pageY;
+	watch.deltaX = e.originalEvent.pageX - watch.lastX;
+	watch.deltaY = e.originalEvent.pageY - watch.lastY;
+	watch.scrollMoveX += watch.deltaX;
+	watch.scrollMoveY += watch.deltaY;
+	watch.scrollX = watch.scrollMoveX;
+	watch.scrollY = watch.scrollMoveY;
+
+
+	clearInterval(watch.inertia);
 
 	$(window).on('touchmove mousemove', function(e){
 		e.preventDefault();
 		e.stopPropagation();
 
-	if (e.originalEvent.touches !== undefined) {
-		e.originalEvent = e.originalEvent.touches[0];
-	};
+		if (e.originalEvent.touches !== undefined) {
+			e.originalEvent = e.originalEvent.touches[0];
+		};
 
-		deltaX = e.originalEvent.pageX - lastX;
-		deltaY = e.originalEvent.pageY - lastY;
+		watch.deltaX = e.originalEvent.pageX - watch.lastX;
+		watch.deltaY = e.originalEvent.pageY - watch.lastY;
 
-		lastX = e.originalEvent.pageX;
-		lastY = e.originalEvent.pageY;
+		watch.lastX = e.originalEvent.pageX;
+		watch.lastY = e.originalEvent.pageY;
 
-		scrollMoveX += deltaX;
-	  scrollMoveY += deltaY;
+		watch.scrollMoveX += watch.deltaX;
+	  watch.scrollMoveY += watch.deltaY;
 
-	  scrollX = scrollMoveX;
-	  scrollY = scrollMoveY;
+	  watch.scrollX = watch.scrollMoveX;
+	  watch.scrollY = watch.scrollMoveY;
 
-	  if(scrollMoveX > scrollRangeX) {
-			scrollX = scrollRangeX + (scrollMoveX - scrollRangeX)/2;
-		}else if (scrollX < -scrollRangeX) {
-			scrollX = -scrollRangeX + (scrollMoveX + scrollRangeX)/2;
+
+	  if(watch.scrollMoveX > watch.scrollRangeX) {
+			watch.scrollX = watch.scrollRangeX + (watch.scrollMoveX - watch.scrollRangeX)/2;
+		}else if (watch.scrollX < -watch.scrollRangeX) {
+			watch.scrollX = -watch.scrollRangeX + (watch.scrollMoveX + watch.scrollRangeX)/2;
 		}
 
-		if(scrollMoveY > scrollRangeY) {
-			scrollY = scrollRangeY + (scrollMoveY - scrollRangeY)/2;
-		}else if (scrollY < -scrollRangeY) {
-			scrollY = -scrollRangeY + (scrollMoveY + scrollRangeY)/2;
+		if(watch.scrollMoveY > watch.scrollRangeY) {
+			watch.scrollY = watch.scrollRangeY + (watch.scrollMoveY - watch.scrollRangeY)/2;
+		}else if (watch.scrollY < -watch.scrollRangeY) {
+			watch.scrollY = -watch.scrollRangeY + (watch.scrollMoveY + watch.scrollRangeY)/2;
 		}
 
-	  iconMapRefresh(100, 43, {x : scrollX, y: scrollY})
+	  watch.iconMapRefresh(100, 43, {x : watch.scrollX, y: watch.scrollY})
 	});
 	$(window).on("touchend mouseup" ,function(e) {
 		$(window).off("touchmove mousemove touchend mouseup");
 		var step = 1,
 				steps = 36,
-				veloX = deltaX,
-				veloY = deltaY,
+				veloX = watch.deltaX,
+				veloY = watch.deltaY,
 				distanceX = veloX * 10,
 				distanceY = veloY * 10;
 
-		inertia = setInterval(function() {
+		watch.inertia = setInterval(function() {
 			if (step > steps) {
-				clearInterval(inertia);
+				clearInterval(watch.inertia);
 			};
 
-			scrollMoveX = scrollX;
-		  scrollMoveY = scrollY;
+			watch.scrollMoveX = watch.scrollX;
+		  watch.scrollMoveY = watch.scrollY;
 
-			inertiaX = $.easing["easeOutCubic"](null, step, 0, distanceX, steps) - $.easing["easeOutCubic"](null, (step - 1), 0, distanceX, steps);
-			inertiaY = $.easing["easeOutCubic"](null, step, 0, distanceY, steps) - $.easing["easeOutCubic"](null, (step - 1), 0, distanceY, steps);
+			watch.inertiaX = $.easing["easeOutCubic"](null, step, 0, distanceX, steps) - $.easing["easeOutCubic"](null, (step - 1), 0, distanceX, steps);
+			watch.inertiaY = $.easing["easeOutCubic"](null, step, 0, distanceY, steps) - $.easing["easeOutCubic"](null, (step - 1), 0, distanceY, steps);
 
-			scrollX += inertiaX;
-			scrollY += inertiaY;
+			watch.scrollX += watch.inertiaX;
+			watch.scrollY += watch.inertiaY;
 
-			if(scrollX > scrollRangeX) {
-				scrollX -= (scrollX - scrollRangeX)/4;
-			}else if (scrollX < -scrollRangeX) {
-				scrollX -= (scrollX + scrollRangeX)/4;
+			if(watch.scrollX > watch.scrollRangeX) {
+				watch.scrollX -= (watch.scrollX - watch.scrollRangeX)/4;
+			}else if (watch.scrollX < -watch.scrollRangeX) {
+				watch.scrollX -= (watch.scrollX + watch.scrollRangeX)/4;
 			}
 
-			if(scrollY > scrollRangeY) {
-				scrollY -= (scrollY - scrollRangeY)/4;
-			}else if (scrollY < -scrollRangeY) {
-				scrollY -= (scrollY + scrollRangeY)/4;
+			if(watch.scrollY > watch.scrollRangeY) {
+				watch.scrollY -= (watch.scrollY - watch.scrollRangeY)/4;
+			}else if (watch.scrollY < -watch.scrollRangeY) {
+				watch.scrollY -= (watch.scrollY + watch.scrollRangeY)/4;
 			}
 
-			iconMapRefresh(100, 43, {x : scrollX, y: scrollY});
+			watch.iconMapRefresh(100, 43, {x : watch.scrollX, y: watch.scrollY});
 			step++;
 		},16)
 	})
 })
-
-
 
 
 homeOpening ();
@@ -350,12 +345,12 @@ function homeOpening (){
 			"transition"	: "0s",
 		});
 
-		scrollX = 0;
-		scrollY = 0;
-		scrollMoveX = 0;
-		scrollMoveY = 0;
+		watch.scrollX = 0;
+		watch.scrollY = 0;
+		watch.scrollMoveX = 0;
+		watch.scrollMoveY = 0;
 
-		iconMapRefresh(100, 100, {x : 0, y: 0});
+		watch.iconMapRefresh(100, 100, {x : 0, y: 0});
 		var openingStep = 0;
 		var openingTimer = setInterval(function() {
 			if (openingStep > 36) {
@@ -363,7 +358,7 @@ function homeOpening (){
 				scrollAvailable = true;
 			};
 
-			iconMapRefresh(100, $.easing["easeOutCubic"](null, openingStep, 100, -57, 36), {x : 0, y: 0})
+			watch.iconMapRefresh(100, $.easing["easeOutCubic"](null, openingStep, 100, -57, 36), {x : 0, y: 0})
 
 			openingStep++;
 		},16)
